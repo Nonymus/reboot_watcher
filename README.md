@@ -1,3 +1,5 @@
+[![Go](https://github.com/Nonymus/reboot_watcher/actions/workflows/go.yml/badge.svg)](https://github.com/Nonymus/reboot_watcher/actions/workflows/go.yml)
+
 Node Exporter Reboot Watcher
 ============================
 Little daemon watching for presence or absence of a sentinel file,
