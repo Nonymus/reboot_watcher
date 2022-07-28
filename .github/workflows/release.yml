@@ -20,14 +20,20 @@ jobs:
       run: go generate .
 
     - name: Build linux-amd64
+      env:
+        GOOS: linux
+        GOARCH: amd64
       run: go build -v -ldflags='-s -w' -o reboot_watcher.linux.amd64 .
 
     - name: Build darwin-arm64
+      env:
+        GOOS: darwin
+        GOARCH: arm64
       run: go build -v -ldflags='-s -w' -o reboot_watcher.darwin.arm64 .
 
     - name: Checksums
       run: sha256sum reboot_watcher.* > sha256sums.txt
-
+g
     - name: Test
       run: go test -v ./...
 
@@ -36,5 +42,5 @@ jobs:
       with:
         generate_release_notes: true
         files: |
-          sha256sums.gtxt
+          sha256sums.txt
           reboot_watcher.*
