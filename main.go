@@ -1,6 +1,7 @@
 package main
 
 import (
+	_ "embed"
 	"errors"
 	"flag"
 	"fmt"
@@ -9,6 +10,7 @@ import (
 	"os"
 	"os/signal"
 	"path"
+	"strings"
 )
 
 var (
@@ -17,6 +19,10 @@ var (
 	metric       string
 )
 
+//go:generate ./scripts/get_version.sh
+//go:embed version.txt
+var version string
+
 func watchSentinel() {
 	watcher, err := fsnotify.NewWatcher()
 	if err != nil {
@@ -24,6 +30,7 @@ func watchSentinel() {
 	}
 	defer watcher.Close()
 
+	// Can't watch on non-existant file, so watch the folder instead
 	dir := path.Dir(sentinelPath)
 	err = watcher.Add(dir)
 	if err != nil {
@@ -58,7 +65,7 @@ func watchSentinel() {
 
 func updateFile(value int) {
 	err := func() error {
-		f, err := os.Create(promFile + ".$")
+		f, err := os.Create(promFile + ".tmp")
 		if err != nil {
 			return err
 		}
@@ -78,14 +85,15 @@ func updateFile(value int) {
 	}
 }
 
-func init() {
+func setupFlags() {
 	flag.StringVar(&sentinelPath, "sentinel", "/var/run/reboot-required", "path to sentinel file")
 	flag.StringVar(&promFile, "promfile", "/var/lib/node_exporter/reboot.prom", "path to promfile")
 	flag.StringVar(&metric, "metric", "node_reboot_required", "Prometheus metric name")
 	flag.Parse()
 }
 
-func main() {
+func work() {
+	log.Println("Version:", strings.TrimSpace(version))
 	log.Println("sentinel:", sentinelPath)
 	log.Println("promfile:", promFile)
 	// Initial check
@@ -102,4 +110,9 @@ func main() {
 	done := make(chan os.Signal)
 	signal.Notify(done, os.Interrupt, os.Kill)
 	<-done
+}
+
+func main() {
+	setupFlags()
+	work()
 }
