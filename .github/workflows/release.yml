@@ -33,7 +33,7 @@ jobs:
 
     - name: Checksums
       run: sha256sum reboot_watcher.* > sha256sums.txt
-g
+
     - name: Test
       run: go test -v ./...
 
