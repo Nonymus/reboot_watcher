@@ -69,7 +69,7 @@ func updateFile(value int) {
 		if err != nil {
 			return err
 		}
-		if _, err := fmt.Fprintf(f, "%s %d", metric, value); err != nil {
+		if _, err := fmt.Fprintf(f, "%s %d\n", metric, value); err != nil {
 			return err
 		}
 		if err := f.Close(); err != nil {
