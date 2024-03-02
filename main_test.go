@@ -22,7 +22,7 @@ func TestWork(t *testing.T) {
 	t.Run("initalAbsent", func(t *testing.T) {
 		// value should be zero
 		f, _ := os.ReadFile(promFile)
-		if string(f) != fmt.Sprintf("%s 0", metric) {
+		if string(f) != fmt.Sprintf("%s 0\n", metric) {
 			t.Error("metric is not zero")
 		}
 	})
@@ -32,7 +32,7 @@ func TestWork(t *testing.T) {
 		os.WriteFile(sentinelPath, []byte(""), 0666)
 		time.Sleep(time.Millisecond * 100)
 		f, _ := os.ReadFile(promFile)
-		if string(f) != fmt.Sprintf("%s 1", metric) {
+		if string(f) != fmt.Sprintf("%s 1\n", metric) {
 			t.Error("metric is not one")
 		}
 	})
@@ -42,7 +42,7 @@ func TestWork(t *testing.T) {
 		os.Remove(sentinelPath)
 		time.Sleep(time.Millisecond * 100)
 		f, _ := os.ReadFile(promFile)
-		if string(f) != fmt.Sprintf("%s 0", metric) {
+		if string(f) != fmt.Sprintf("%s 0\n", metric) {
 			t.Error("metric did not switch back to zero")
 		}
 	})
